@@ -8,7 +8,7 @@ provider:
   logRetentionInDays: 120
   versionFunctions: true
   memorySize: 512 # Lambda allocates CPU power proportional to the amount of memory provisioned
-  timeout: 30
+  timeout: 60
   tracing:
     lambda: true
   tags:
@@ -21,7 +21,7 @@ provider:
 functions:
   sourcestack-cron:
     handler: handlers/sourcestack_cron_handler.lambda_handler
-    timeout: 30
+    timeout: 60
     environment:
       SOURCESTACK_KEY: ${env:SOURCESTACK_KEY}
       WP_URL: ${env:WP_URL}
