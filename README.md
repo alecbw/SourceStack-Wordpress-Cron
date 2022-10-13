@@ -9,7 +9,7 @@ Requires the following environment variables to be set:
 - WP_URL
 - WP_PASS
 
-When setting up, make sure to customize the following to your stack:
+When setting up, make sure to customize the following to your stack/need:
 - AWS Area Zone (AZ)
 - SourceStack API call filters
 - Post `author`, `excerpt`, `meta` fields, `template`, `tags`, 
