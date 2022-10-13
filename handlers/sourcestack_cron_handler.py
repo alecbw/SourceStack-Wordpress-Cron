@@ -1,6 +1,7 @@
 import os
 import json
 from datetime import datetime
+import base64
 
 # Non-standard-lib
 import requests
@@ -23,8 +24,14 @@ def fetch_jobs():
     return response.json()
 
 
+def create_wp_auth():
+    credentials = os.environ['WP_USER'] + ':' + os.environ['WP_PASS']
+    token = base64.b64encode(credentials.encode())
+    header = {'Authorization': 'Basic ' + token.decode('utf-8')}
+    return header
+
 # based on https://developer.wordpress.org/rest-api/reference/posts/#create-a-post
-def create_post(job):
+def create_wp_post(job, auth_header):
 
     request_body = {
         "date": datetime.now().strftime('%Y-%m-%d'), # alternately, could use last_indexed for date / date_gmt - # The date the object was published, in the site's timezone.
@@ -47,10 +54,11 @@ def create_post(job):
         "tags": ["TODO"], # The terms assigned to the object in the post_tag taxonomy.
     }
     url_endpoint = os.environ['WP_URL'].rstrip("/") + '/wp-json/wp/v2/posts'
-    requests.post(url_endpoint, data=json.dumps(request_body))
+    requests.post(url_endpoint, headers=auth_header, data=json.dumps(request_body))
 
 
 def lambda_handler(event, context):
     jobs = fetch_jobs()
+    auth_header = create_wp_auth()
     for job in jobs['data']:
-        create_post(job)
+        create_wp_post(job, auth_header)

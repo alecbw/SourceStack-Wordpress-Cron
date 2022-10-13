@@ -25,6 +25,7 @@ functions:
     environment:
       SOURCESTACK_KEY: ${env:SOURCESTACK_KEY}
       WP_URL: ${env:WP_URL}
+      WP_USER: ${env:WP_USER}
       WP_PASS: ${env:WP_PASS}
     events:
       - schedule:
