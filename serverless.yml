@@ -2,7 +2,7 @@ service: sourcestack-cron
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.7 # if you set >3.7, you will need a Lambda Layer for requests - see: https://aws.amazon.com/blogs/compute/upcoming-changes-to-the-python-sdk-in-aws-lambda/#:~:text=The%20Lambda%20runtimes%20for%20Python,or%20as%20a%20Lambda%20layer.
   stage: prod
   region: us-west-1 # TODO
   logRetentionInDays: 120
@@ -29,8 +29,6 @@ functions:
     events:
       - schedule:
           rate: cron(0 1 ? * SUN *) # 1:00 am UTC every Sunday; 6:00 PM UTC-8. The last * is year
-    layers:
-      - arn:aws:lambda:us-west-1:${env:AWS_ACCOUNT_ID}:layer:TODO-LAYER-TO-HOST-REQUESTS
 
 
 package:
