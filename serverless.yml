@@ -1,0 +1,44 @@
+service: sourcestack-cron
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: prod
+  region: us-west-1 # TODO
+  logRetentionInDays: 120
+  versionFunctions: true
+  memorySize: 512 # Lambda allocates CPU power proportional to the amount of memory provisioned
+  timeout: 30
+  tracing:
+    lambda: true
+  tags:
+    deployment: serverless.com
+    project: sourcestack-cron
+  environment:
+    AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
+
+
+functions:
+  sourcestack-cron:
+    handler: handlers/sourcestack_cron_handler.lambda_handler
+    timeout: 30
+    environment:
+      SOURCESTACK_KEY: ${env:SOURCESTACK_KEY}
+      WP_URL: ${env:WP_URL}
+      WP_PASS: ${env:WP_PASS}
+    events:
+      - schedule:
+          rate: cron(0 1 ? * SUN *) # 1:00 am UTC every Sunday; 6:00 PM UTC-8. The last * is year
+    layers:
+      - arn:aws:lambda:us-west-1:${env:AWS_ACCOUNT_ID}:layer:TODO-LAYER-TO-HOST-REQUESTS
+
+
+package:
+  exclude:
+    - .git/**
+    - .terraform/**
+    - terraform.tfstate
+    - terraform.tfstate.backup
+    - package-lock.json
+    - package.json
+    - node_modules/**
